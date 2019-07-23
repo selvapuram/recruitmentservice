@@ -19,19 +19,25 @@ Ensure that you set your MAVEN_HOME environment variable, for example:
 
 ```MAVEN_HOME=E:\Downloads\apache-maven-3.5.4-bin\apache-maven-3.5.4\```
 
-NOTE: You can use Maven directly
+NOTE: 
+1.You can use Maven directly
+2.Before running the applications, all logs are created under the /usr/local/heavenhr/logs
+3.application.properties has the db details and port number
+
+and for any permission related item, Please use 
+chmod command to give the permission in linux or mac machines in the terminal.
 
 
 ### Building
 To build the application from source clone or unzip the application and from navigate to the root directory.
 ```
-mvn clean install -DskipTests
+mvn clean install -DskipTests or compile.bat
 ```
 
 ### Testing
 To run all tests, use:
 ```
-mvn clean install
+mvn clean install or compile.bat
 ```
 
 
@@ -39,7 +45,7 @@ mvn clean install
 ### Running
 To run recruitment from the command line (assuming you have been able to build from the source code successfully)
 ```
-./run
+./run or run.bat or java -jar  target\recruitment-0.0.1-SNAPSHOT.jar
 ```
 
 
