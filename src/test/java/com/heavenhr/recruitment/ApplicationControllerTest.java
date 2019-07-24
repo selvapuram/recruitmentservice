@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import com.heavenhr.recruitment.model.common.ErrorModel;
 import com.heavenhr.recruitment.model.dto.ApplicationResponse;
 import com.heavenhr.recruitment.utils.ObjectMapperUtil;
 
@@ -41,8 +42,13 @@ public class ApplicationControllerTest extends AbstractTest {
 
   private static final int OFFER_SUCCESS = 2;
 
+  private static final int OFFER_ERROR = 200;
+
   /** The base url. */
   private String baseUrl = "/offers/" + OFFER_SUCCESS + "/applications";
+
+  /** The base url. */
+  private String baseErrorUrl = "/offers/" + OFFER_ERROR + "/applications";
 
   @Before
   public void setup() throws FileNotFoundException, IOException, JSONException {
@@ -67,6 +73,60 @@ public class ApplicationControllerTest extends AbstractTest {
   }
 
   @Test
+  public void testCreateDuplicateApplication() throws Exception {
+
+    String uri = baseUrl + "/";
+    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(uri);
+    applicationJson.put("candidateEmail", "testuser1@testmail.com");
+    byte[] offer = applicationJson.toString().getBytes();
+    request.content(offer);
+
+    MvcResult result = mvc.perform(request.contentType(MediaType.APPLICATION_JSON)).andReturn();
+
+    String content = result.getResponse().getContentAsString();
+    ErrorModel response = ObjectMapperUtil.convertToObject(content, ErrorModel.class);
+    Assert.assertEquals("CreateApplicationResponse Code", result.getResponse().getStatus(),
+      HttpStatus.BAD_REQUEST.value());
+    Assert.assertNotNull("Create Application", response);
+  }
+
+  @Test
+  public void testCreateEmptyEmail() throws Exception {
+
+    String uri = baseUrl + "/";
+    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(uri);
+    applicationJson.put("candidateEmail", "");
+    byte[] offer = applicationJson.toString().getBytes();
+    request.content(offer);
+
+    MvcResult result = mvc.perform(request.contentType(MediaType.APPLICATION_JSON)).andReturn();
+
+    String content = result.getResponse().getContentAsString();
+    ErrorModel response = ObjectMapperUtil.convertToObject(content, ErrorModel.class);
+    Assert.assertEquals("CreateApplicationResponse Code", result.getResponse().getStatus(),
+      HttpStatus.BAD_REQUEST.value());
+    Assert.assertNotNull("Create Application", response);
+  }
+
+  @Test
+  public void testCreateEmptyResumeText() throws Exception {
+
+    String uri = baseUrl + "/";
+    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(uri);
+    applicationJson.put("resumeText", "");
+    byte[] offer = applicationJson.toString().getBytes();
+    request.content(offer);
+
+    MvcResult result = mvc.perform(request.contentType(MediaType.APPLICATION_JSON)).andReturn();
+
+    String content = result.getResponse().getContentAsString();
+    ErrorModel response = ObjectMapperUtil.convertToObject(content, ErrorModel.class);
+    Assert.assertEquals("CreateApplicationResponse Code", result.getResponse().getStatus(),
+      HttpStatus.BAD_REQUEST.value());
+    Assert.assertNotNull("Create Application", response);
+  }
+
+  @Test
   public void testViewApplication() throws Exception {
 
     String uri = baseUrl + "/" + "1";
@@ -77,6 +137,19 @@ public class ApplicationControllerTest extends AbstractTest {
     ApplicationResponse response = ObjectMapperUtil.convertToObject(content, ApplicationResponse.class);
     Assert.assertEquals("ViewApplicationResponse Code", result.getResponse().getStatus(), HttpStatus.OK.value());
     Assert.assertNotNull("View Application", response);
+  }
+
+  @Test
+  public void testViewApplicationNotFound() throws Exception {
+
+    String uri = baseUrl + "/" + "100";
+    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get(uri);
+    MvcResult result = mvc.perform(request.contentType(MediaType.APPLICATION_JSON)).andReturn();
+
+    String content = result.getResponse().getContentAsString();
+    ErrorModel response = ObjectMapperUtil.convertToObject(content, ErrorModel.class);
+    Assert.assertEquals("ViewApplicationResponse Code", result.getResponse().getStatus(), HttpStatus.NOT_FOUND.value());
+    Assert.assertNotNull("View Application", response.getMessage());
   }
 
   @Test
@@ -92,6 +165,18 @@ public class ApplicationControllerTest extends AbstractTest {
   }
 
   @Test
+  public void testViewAllApplicationNotFound() throws Exception {
+    String uri = baseErrorUrl + "/";
+    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get(uri);
+    MvcResult result = mvc.perform(request.contentType(MediaType.APPLICATION_JSON)).andReturn();
+
+    String content = result.getResponse().getContentAsString();
+    ErrorModel response = ObjectMapperUtil.convertToObject(content, ErrorModel.class);
+    Assert.assertEquals("ViewApplicationResponse Code", result.getResponse().getStatus(), HttpStatus.NOT_FOUND.value());
+    Assert.assertNotNull("Find Applications", response.getMessage());
+  }
+
+  @Test
   public void testPatchApplication() throws Exception {
 
     String uri = baseUrl + "/" + "1?applicationStatus=HIRED";
@@ -102,6 +187,19 @@ public class ApplicationControllerTest extends AbstractTest {
     ApplicationResponse response = ObjectMapperUtil.convertToObject(content, ApplicationResponse.class);
     Assert.assertEquals("PatchApplicationResponse Code", result.getResponse().getStatus(), HttpStatus.OK.value());
     Assert.assertNotNull("Patch Application", response);
+  }
+
+  @Test
+  public void testPatchApplicationNotFound() throws Exception {
+
+    String uri = baseUrl + "/" + "100";
+    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.patch(uri);
+    MvcResult result = mvc.perform(request.contentType(MediaType.APPLICATION_JSON)).andReturn();
+
+    String content = result.getResponse().getContentAsString();
+    ErrorModel response = ObjectMapperUtil.convertToObject(content, ErrorModel.class);
+    Assert.assertEquals("ViewApplicationResponse Code", result.getResponse().getStatus(), HttpStatus.NOT_FOUND.value());
+    Assert.assertNotNull("View Application", response.getMessage());
   }
 
 }

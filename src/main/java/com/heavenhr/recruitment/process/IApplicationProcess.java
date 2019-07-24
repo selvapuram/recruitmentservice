@@ -22,8 +22,9 @@ public interface IApplicationProcess {
    * Find all application.
    *
    * @return the application response
+   * @throws ResourceNotFoundException 
    */
-  ApplicationResponse findAllApplication(long offerId, int page, int size);
+  ApplicationResponse findAllApplication(long offerId, int page, int size) throws ResourceNotFoundException;
 
   /**
    * Find application by id.

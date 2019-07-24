@@ -45,10 +45,13 @@ mvn clean install or compile.bat
 ### Running
 To run recruitment from the command line (assuming you have been able to build from the source code successfully)
 ```
-./run or run.bat or java -jar  target\recruitment-0.0.1-SNAPSHOT.jar
+run.bat or java -jar  target\recruitment-0.0.1-SNAPSHOT.jar
 ```
 
+### URL To Execute Application
+Application:  http://localhost:8501/recruitment/swagger-ui.html
 
+H2: http://localhost:8501/recruitment/h2-console/login.jsp
 
 ## Building, Testing and Running recruitment from STS(Spring Tool Suite)
 recruiment service' source comes with Maven configuration files which are recognized by [Eclipse](http://www.eclipse.org/) if the Eclipse Maven plugin (m2e) is installed.

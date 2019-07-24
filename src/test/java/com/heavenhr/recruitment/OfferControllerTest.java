@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import com.heavenhr.recruitment.model.common.ErrorModel;
 import com.heavenhr.recruitment.model.dto.OfferResponse;
 import com.heavenhr.recruitment.utils.ObjectMapperUtil;
 
@@ -35,10 +36,13 @@ import com.heavenhr.recruitment.utils.ObjectMapperUtil;
 public class OfferControllerTest extends AbstractTest {
 
   /** The data path. */
-  String dataPath = "src/test/resources/data/OfferData.json";
+  String dataPath = "src/test/resources/data/";
 
   /** The offerJson json. */
   public static JSONObject offerJson = null;
+
+  /** The offerJson json. */
+  public static JSONObject offerDupJson = null;
 
   /** The base url. */
   private String baseUrl = "/offers";
@@ -46,7 +50,8 @@ public class OfferControllerTest extends AbstractTest {
   @Before
   public void setup() throws FileNotFoundException, IOException, JSONException {
     mvc = MockMvcBuilders.webAppContextSetup(context).build();
-    offerJson = new JSONObject(FileUtils.readFileToString(new File(dataPath), "UTF-8"));
+    offerJson = new JSONObject(FileUtils.readFileToString(new File(dataPath + "OfferData.json"), "UTF-8"));
+    offerDupJson = new JSONObject(FileUtils.readFileToString(new File(dataPath + "OfferDupData.json"), "UTF-8"));
   }
 
   @Test
@@ -74,6 +79,22 @@ public class OfferControllerTest extends AbstractTest {
   }
 
   @Test
+  public void testCreateOfferDuplicate() throws Exception {
+
+    String uri = baseUrl + "/";
+    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(uri);
+    byte[] offer = offerDupJson.toString().getBytes();
+    request.content(offer);
+
+    MvcResult result = mvc.perform(request.contentType(MediaType.APPLICATION_JSON)).andReturn();
+
+    String content = result.getResponse().getContentAsString();
+    ErrorModel response = ObjectMapperUtil.convertToObject(content, ErrorModel.class);
+    Assert.assertEquals("Create Offer Error", result.getResponse().getStatus(), HttpStatus.BAD_REQUEST.value());
+    Assert.assertNotNull("Create Offer Error", response.getMessage());
+  }
+
+  @Test
   public void testViewOffer() throws Exception {
 
     String uri = baseUrl + "/" + "1";
@@ -87,6 +108,19 @@ public class OfferControllerTest extends AbstractTest {
   }
 
   @Test
+  public void testViewOfferNotFound() throws Exception {
+
+    String uri = baseUrl + "/" + "100";
+    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get(uri);
+    MvcResult result = mvc.perform(request.contentType(MediaType.APPLICATION_JSON)).andReturn();
+
+    String content = result.getResponse().getContentAsString();
+    ErrorModel response = ObjectMapperUtil.convertToObject(content, ErrorModel.class);
+    Assert.assertEquals("ViewOfferResponse Code", result.getResponse().getStatus(), HttpStatus.NOT_FOUND.value());
+    Assert.assertNotNull("View Offer Not Found", response.getMessage());
+  }
+
+  @Test
   public void testViewAllOfferSuccess() throws Exception {
     String uri = baseUrl + "/";
     MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get(uri);
@@ -97,5 +131,4 @@ public class OfferControllerTest extends AbstractTest {
     Assert.assertEquals("ViewOffersResponse Code", result.getResponse().getStatus(), HttpStatus.OK.value());
     Assert.assertNotNull("Find Offer", response);
   }
-
 }

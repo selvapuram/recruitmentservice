@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.heavenhr.recruitment.exception.ResourceNotFoundException;
 import com.heavenhr.recruitment.model.dto.Offer;
 import com.heavenhr.recruitment.model.dto.OfferResponse;
 import com.heavenhr.recruitment.process.IOfferProcess;
@@ -35,16 +34,19 @@ public class FindAllOfferServiceImpl implements FindAllOfferService {
    * @param request 
    *        It contains the attributes required for the load all offers.
    * @return It returns the <code>OfferResponse</code>.
+   * @throws Exception 
    */
   @Override
-  public OfferResponse process(Offer request) {
+  public OfferResponse process(Offer request) throws Exception {
     LOGGER.debug("TODO");
     OfferResponse findAllOfferAPIResponse = OfferFactory.emptyResponse();
 
     try {
       findAllOfferAPIResponse = offerProcessor.findAllOffer();
       /* Catch runtime exception */
-    } catch (RuntimeException | ResourceNotFoundException e) {
+    } catch (RuntimeException e) {
+      LOGGER.error("Error on finding offer", e);
+      throw e;
     } finally {
       /* Final log */
     }

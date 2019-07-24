@@ -37,7 +37,7 @@ public class FindAllApplicationServiceImpl implements FindAllApplicationService 
    * @return It returns the <code>ApplicationResponse</code>.
    */
   @Override
-  public ApplicationResponse process(Application request) {
+  public ApplicationResponse process(Application request) throws Exception {
     LOGGER.debug("TODO");
     ApplicationResponse findAllApplicationAPIResponse = ApplicationFactory.emptyResponse();
 
@@ -48,6 +48,8 @@ public class FindAllApplicationServiceImpl implements FindAllApplicationService 
         Constants.PAGE_DEFAULT, Constants.PAGE_DEFAULT_SIZE);
       /* Catch runtime exception */
     } catch (RuntimeException e) {
+      LOGGER.error("Error on finding application", e);
+      throw e;
     } finally {
       /* Final log */
     }

@@ -100,11 +100,16 @@ public class ApplicationProcessImpl implements IApplicationProcess {
    * @see com.heavenhr.recruitment.process.IApplicationProcess#findAllApplication(long, int, int)
    */
   @Override
-  public ApplicationResponse findAllApplication(long offerId, int page, int size) {
+  public ApplicationResponse findAllApplication(long offerId, int page, int size) throws ResourceNotFoundException {
     PageRequest pageableInfo = PageRequest.of(page, size);
     Page<ApplicationEntity> p = applicationRepository.findAllByOfferId(offerId, pageableInfo);
-    List<ApplicationEntity> l = p.getContent();
-    return ApplicationFactory.buildResponse(applicationMapper.entityAppListToDtoAppList(l));
+    if (p.hasContent()) {
+      List<ApplicationEntity> l = p.getContent();
+      return ApplicationFactory.buildResponse(applicationMapper.entityAppListToDtoAppList(l));
+    } else {
+      LOGGER.error("applications not found for the offer {} ", offerId);
+      throw new ResourceNotFoundException("applications are not found for offer");
+    }
   }
 
   /*

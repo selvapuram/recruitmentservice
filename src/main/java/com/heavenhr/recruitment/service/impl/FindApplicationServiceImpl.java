@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.heavenhr.recruitment.exception.ResourceNotFoundException;
 import com.heavenhr.recruitment.model.dto.Application;
 import com.heavenhr.recruitment.model.dto.ApplicationResponse;
 import com.heavenhr.recruitment.process.IApplicationProcess;
@@ -44,7 +43,7 @@ public class FindApplicationServiceImpl implements FindApplicationService {
     * @return It returns the <code>ApplicationAPIResponse</code>.
     */
   @Override
-  public ApplicationResponse process(Application request) {
+  public ApplicationResponse process(Application request) throws Exception {
     LOGGER.debug("TODO");
     ApplicationResponse findApplicationAPIResponse = ApplicationFactory.emptyResponse();
 
@@ -52,7 +51,9 @@ public class FindApplicationServiceImpl implements FindApplicationService {
       // TODO: validation
       findApplicationAPIResponse = applicationProcessor.findApplicationById(request.getId(), request.getOfferId());
       /* Catch runtime exception */
-    } catch (RuntimeException | ResourceNotFoundException e) {
+    } catch (RuntimeException e) {
+      LOGGER.error("Error on finding application", e);
+      throw e;
     } finally {
       /* Final log */
     }

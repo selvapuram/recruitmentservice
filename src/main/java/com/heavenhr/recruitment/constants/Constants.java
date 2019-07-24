@@ -41,7 +41,7 @@ package com.heavenhr.recruitment.constants;
 public class Constants {
 
   /** The Constant PAGE_DEFAULT. */
-  public static final int PAGE_DEFAULT = 1;
+  public static final int PAGE_DEFAULT = 0;
 
   /** The Constant PAGE_DEFAULT_SIZE. */
   public static final int PAGE_DEFAULT_SIZE = 50;

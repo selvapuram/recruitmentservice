@@ -42,9 +42,10 @@ public class FindOfferServiceImpl implements FindOfferService {
     * @param request 
     *        It contains the attributes required for the load of Offer.
     * @return It returns the <code>OfferAPIResponse</code>.
+   * @throws Exception 
     */
   @Override
-  public OfferResponse process(Offer request) {
+  public OfferResponse process(Offer request) throws Exception {
     LOGGER.debug("TODO");
     OfferResponse findOfferAPIResponse = OfferFactory.emptyResponse();
 
@@ -52,6 +53,8 @@ public class FindOfferServiceImpl implements FindOfferService {
       findOfferAPIResponse = offerProcessor.findOfferById(request.getId());
       /* Catch runtime exception */
     } catch (RuntimeException | ResourceNotFoundException e) {
+      LOGGER.error("Error on finding offer", e);
+      throw e;
     } finally {
       /* Final log */
     }
