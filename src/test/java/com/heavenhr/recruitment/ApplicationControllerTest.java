@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import com.heavenhr.recruitment.constants.Constants;
 import com.heavenhr.recruitment.model.common.ErrorModel;
 import com.heavenhr.recruitment.model.dto.ApplicationResponse;
 import com.heavenhr.recruitment.utils.ObjectMapperUtil;
@@ -60,7 +61,7 @@ public class ApplicationControllerTest extends AbstractTest {
   public void testCreateApplication() throws Exception {
 
     String uri = baseUrl + "/";
-    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(uri);
+    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(uri).header(Constants.AUTH_HEADER, token);
     byte[] offer = applicationJson.toString().getBytes();
     request.content(offer);
 
@@ -76,7 +77,7 @@ public class ApplicationControllerTest extends AbstractTest {
   public void testCreateDuplicateApplication() throws Exception {
 
     String uri = baseUrl + "/";
-    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(uri);
+    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(uri).header(Constants.AUTH_HEADER, token);
     applicationJson.put("candidateEmail", "testuser1@testmail.com");
     byte[] offer = applicationJson.toString().getBytes();
     request.content(offer);
@@ -94,7 +95,7 @@ public class ApplicationControllerTest extends AbstractTest {
   public void testCreateEmptyEmail() throws Exception {
 
     String uri = baseUrl + "/";
-    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(uri);
+    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(uri).header(Constants.AUTH_HEADER, token);
     applicationJson.put("candidateEmail", "");
     byte[] offer = applicationJson.toString().getBytes();
     request.content(offer);
@@ -112,7 +113,7 @@ public class ApplicationControllerTest extends AbstractTest {
   public void testCreateEmptyResumeText() throws Exception {
 
     String uri = baseUrl + "/";
-    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(uri);
+    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(uri).header(Constants.AUTH_HEADER, token);
     applicationJson.put("resumeText", "");
     byte[] offer = applicationJson.toString().getBytes();
     request.content(offer);
@@ -130,7 +131,7 @@ public class ApplicationControllerTest extends AbstractTest {
   public void testViewApplication() throws Exception {
 
     String uri = baseUrl + "/" + "1";
-    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get(uri);
+    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get(uri).header(Constants.AUTH_HEADER, token);
     MvcResult result = mvc.perform(request.contentType(MediaType.APPLICATION_JSON)).andReturn();
 
     String content = result.getResponse().getContentAsString();
@@ -143,7 +144,7 @@ public class ApplicationControllerTest extends AbstractTest {
   public void testViewApplicationNotFound() throws Exception {
 
     String uri = baseUrl + "/" + "100";
-    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get(uri);
+    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get(uri).header(Constants.AUTH_HEADER, token);
     MvcResult result = mvc.perform(request.contentType(MediaType.APPLICATION_JSON)).andReturn();
 
     String content = result.getResponse().getContentAsString();
@@ -155,7 +156,7 @@ public class ApplicationControllerTest extends AbstractTest {
   @Test
   public void testViewAllApplication() throws Exception {
     String uri = baseUrl + "/";
-    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get(uri);
+    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get(uri).header(Constants.AUTH_HEADER, token);
     MvcResult result = mvc.perform(request.contentType(MediaType.APPLICATION_JSON)).andReturn();
 
     String content = result.getResponse().getContentAsString();
@@ -167,7 +168,7 @@ public class ApplicationControllerTest extends AbstractTest {
   @Test
   public void testViewAllApplicationNotFound() throws Exception {
     String uri = baseErrorUrl + "/";
-    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get(uri);
+    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get(uri).header(Constants.AUTH_HEADER, token);
     MvcResult result = mvc.perform(request.contentType(MediaType.APPLICATION_JSON)).andReturn();
 
     String content = result.getResponse().getContentAsString();
@@ -180,7 +181,7 @@ public class ApplicationControllerTest extends AbstractTest {
   public void testPatchApplication() throws Exception {
 
     String uri = baseUrl + "/" + "1?applicationStatus=HIRED";
-    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.patch(uri);
+    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.patch(uri).header(Constants.AUTH_HEADER, token);
     MvcResult result = mvc.perform(request.contentType(MediaType.APPLICATION_JSON)).andReturn();
 
     String content = result.getResponse().getContentAsString();
@@ -193,7 +194,7 @@ public class ApplicationControllerTest extends AbstractTest {
   public void testPatchApplicationNotFound() throws Exception {
 
     String uri = baseUrl + "/" + "100";
-    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.patch(uri);
+    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.patch(uri).header(Constants.AUTH_HEADER, token);
     MvcResult result = mvc.perform(request.contentType(MediaType.APPLICATION_JSON)).andReturn();
 
     String content = result.getResponse().getContentAsString();

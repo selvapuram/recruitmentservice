@@ -30,34 +30,25 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
-package com.heavenhr.recruitment;
+package com.heavenhr.recruitment.repository;
 
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.context.WebApplicationContext;
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
+
+import com.heavenhr.recruitment.model.entity.Customer;
 
 /**
  * @author madhankumar
  *
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = RecruitmentApplication.class)
-@ActiveProfiles(profiles = {"dev"})
-public abstract class AbstractTest {
+@Repository
+public interface CustomerRepository extends CrudRepository<Customer, Long> {
 
-  @Autowired
-  protected TestRestTemplate template;
+  @Query(value = "SELECT u FROM customer u where u.username = ?1 and u.password = ?2 ")
+  Optional<Customer> login(String username, String password);
 
-  @Autowired
-  WebApplicationContext context;
-
-  protected MockMvc mvc;
-
-  protected static String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiQURNSU4iLCJwYXNzd29yZCI6IkFETUlOIiwicm9sZSI6IlJPTEVfQURNSU4ifQ.pwYxrnUJiaEoYfQqC4uKHa3LpZnHna20Ot92zzJEvKw";
-
+  Optional<Customer> findByToken(String token);
 }

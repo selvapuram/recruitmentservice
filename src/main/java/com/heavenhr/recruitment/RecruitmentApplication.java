@@ -22,6 +22,7 @@ import java.util.Set;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -40,7 +41,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableJpaRepositories("com.heavenhr.recruitment.repository")
 @EntityScan("com.heavenhr.recruitment.model.entity")
 @EnableTransactionManagement(proxyTargetClass = true)
-@SpringBootApplication(scanBasePackages = "com.heavenhr.recruitment", exclude = {ErrorMvcAutoConfiguration.class})
+@SpringBootApplication(scanBasePackages = "com.heavenhr.recruitment",
+  exclude = {ErrorMvcAutoConfiguration.class, SecurityAutoConfiguration.class})
 @PropertySource("classpath:swagger.properties")
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class RecruitmentApplication {

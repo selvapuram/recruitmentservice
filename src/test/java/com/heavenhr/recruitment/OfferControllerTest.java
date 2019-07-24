@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import com.heavenhr.recruitment.constants.Constants;
 import com.heavenhr.recruitment.model.common.ErrorModel;
 import com.heavenhr.recruitment.model.dto.OfferResponse;
 import com.heavenhr.recruitment.utils.ObjectMapperUtil;
@@ -66,7 +67,7 @@ public class OfferControllerTest extends AbstractTest {
   public void testCreateOffer() throws Exception {
 
     String uri = baseUrl + "/";
-    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(uri);
+    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(uri).header(Constants.AUTH_HEADER, token);
     byte[] offer = offerJson.toString().getBytes();
     request.content(offer);
 
@@ -82,7 +83,7 @@ public class OfferControllerTest extends AbstractTest {
   public void testCreateOfferDuplicate() throws Exception {
 
     String uri = baseUrl + "/";
-    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(uri);
+    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(uri).header(Constants.AUTH_HEADER, token);
     byte[] offer = offerDupJson.toString().getBytes();
     request.content(offer);
 
@@ -98,7 +99,7 @@ public class OfferControllerTest extends AbstractTest {
   public void testViewOffer() throws Exception {
 
     String uri = baseUrl + "/" + "1";
-    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get(uri);
+    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get(uri).header(Constants.AUTH_HEADER, token);
     MvcResult result = mvc.perform(request.contentType(MediaType.APPLICATION_JSON)).andReturn();
 
     String content = result.getResponse().getContentAsString();
@@ -111,7 +112,7 @@ public class OfferControllerTest extends AbstractTest {
   public void testViewOfferNotFound() throws Exception {
 
     String uri = baseUrl + "/" + "100";
-    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get(uri);
+    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get(uri).header(Constants.AUTH_HEADER, token);
     MvcResult result = mvc.perform(request.contentType(MediaType.APPLICATION_JSON)).andReturn();
 
     String content = result.getResponse().getContentAsString();
@@ -123,7 +124,7 @@ public class OfferControllerTest extends AbstractTest {
   @Test
   public void testViewAllOfferSuccess() throws Exception {
     String uri = baseUrl + "/";
-    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get(uri);
+    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get(uri).header(Constants.AUTH_HEADER, token);
     MvcResult result = mvc.perform(request.contentType(MediaType.APPLICATION_JSON)).andReturn();
 
     String content = result.getResponse().getContentAsString();

@@ -30,34 +30,59 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
-package com.heavenhr.recruitment;
+package com.heavenhr.recruitment.service.impl;
 
-import org.junit.runner.RunWith;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.stereotype.Service;
+
+import com.heavenhr.recruitment.model.entity.Customer;
+import com.heavenhr.recruitment.repository.CustomerRepository;
+import com.heavenhr.recruitment.service.CustomerService;
 
 /**
  * @author madhankumar
  *
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = RecruitmentApplication.class)
-@ActiveProfiles(profiles = {"dev"})
-public abstract class AbstractTest {
+@Service("customerService")
+public class DefaultCustomerService implements CustomerService {
 
   @Autowired
-  protected TestRestTemplate template;
+  CustomerRepository customerRepository;
 
-  @Autowired
-  WebApplicationContext context;
+  @Override
+  public String login(String username, String password) {
+    Optional<Customer> customer = customerRepository.login(username, password);
+    if (customer.isPresent()) {
+      String token = UUID.randomUUID().toString();
+      Customer custom = customer.get();
+      custom.setToken(token);
+      customerRepository.save(custom);
+      return token;
+    }
 
-  protected MockMvc mvc;
+    return "";
+  }
 
-  protected static String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiQURNSU4iLCJwYXNzd29yZCI6IkFETUlOIiwicm9sZSI6IlJPTEVfQURNSU4ifQ.pwYxrnUJiaEoYfQqC4uKHa3LpZnHna20Ot92zzJEvKw";
+  @Override
+  public Optional<User> findByToken(String token) {
+    Optional<Customer> customer = customerRepository.findByToken(token);
+    if (customer.isPresent()) {
+      Customer customer1 = customer.get();
+      User user = new User(customer1.getUsername(), customer1.getPassword(), true, true, true, true,
+        AuthorityUtils.createAuthorityList("USER"));
+      return Optional.of(user);
+    }
+    return Optional.empty();
+  }
 
+  @Override
+  public Customer findById(Long id) {
+    Optional<Customer> customer = customerRepository.findById(id);
+    return customer.orElse(null);
+  }
 }

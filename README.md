@@ -53,6 +53,16 @@ Application:  http://localhost:8501/recruitment/swagger-ui.html
 
 H2: http://localhost:8501/recruitment/h2-console/login.jsp
 
+Use token controller to login with pre defined user and password
+
+username: USER
+password: USER
+
+username: ADMIN
+password: ADMIN
+
+enter the token in the auth header 'x-auth-token' to proceed with api
+
 ## Building, Testing and Running recruitment from STS(Spring Tool Suite)
 recruiment service' source comes with Maven configuration files which are recognized by [Eclipse](http://www.eclipse.org/) if the Eclipse Maven plugin (m2e) is installed.
 

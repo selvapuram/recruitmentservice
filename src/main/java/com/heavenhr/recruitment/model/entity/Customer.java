@@ -30,34 +30,51 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
-package com.heavenhr.recruitment;
+package com.heavenhr.recruitment.model.entity;
 
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.context.WebApplicationContext;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
- * @author madhankumar
+ * The Class Customer.
  *
+ * @author madhankumar
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = RecruitmentApplication.class)
-@ActiveProfiles(profiles = {"dev"})
-public abstract class AbstractTest {
+@Entity(name = "customer")
 
-  @Autowired
-  protected TestRestTemplate template;
+/**
+ * Gets the token.
+ *
+ * @return the token
+ */
+@Getter
 
-  @Autowired
-  WebApplicationContext context;
+/**
+ * Sets the token.
+ *
+ * @param token the new token
+ */
+@Setter
+@Table(name = "customer")
+public class Customer {
 
-  protected MockMvc mvc;
+  /** The id. */
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private long id;
 
-  protected static String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiQURNSU4iLCJwYXNzd29yZCI6IkFETUlOIiwicm9sZSI6IlJPTEVfQURNSU4ifQ.pwYxrnUJiaEoYfQqC4uKHa3LpZnHna20Ot92zzJEvKw";
+  /** The user name. */
+  private String username;
 
+  /** The password. */
+  private String password;
+
+  /** The token. */
+  private String token;
 }

@@ -30,34 +30,31 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
-package com.heavenhr.recruitment;
+package com.heavenhr.recruitment.security;
 
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.context.WebApplicationContext;
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.stereotype.Component;
 
 /**
  * @author madhankumar
  *
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = RecruitmentApplication.class)
-@ActiveProfiles(profiles = {"dev"})
-public abstract class AbstractTest {
+@Component("restAuthenticationEntryPoint")
+public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
-  @Autowired
-  protected TestRestTemplate template;
+  public void commence(HttpServletRequest request, HttpServletResponse response,
+    AuthenticationException authenticationException) throws IOException, ServletException {
 
-  @Autowired
-  WebApplicationContext context;
+    response.setContentType("application/json");
+    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+    response.getOutputStream().println("{ \"error\": \"" + authenticationException.getMessage() + "\" }");
 
-  protected MockMvc mvc;
-
-  protected static String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiQURNSU4iLCJwYXNzd29yZCI6IkFETUlOIiwicm9sZSI6IlJPTEVfQURNSU4ifQ.pwYxrnUJiaEoYfQqC4uKHa3LpZnHna20Ot92zzJEvKw";
-
+  }
 }

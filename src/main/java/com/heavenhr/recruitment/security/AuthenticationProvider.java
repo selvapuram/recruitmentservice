@@ -30,34 +30,45 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
-package com.heavenhr.recruitment;
+package com.heavenhr.recruitment.security;
 
-import org.junit.runner.RunWith;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Component;
+
+import com.heavenhr.recruitment.service.CustomerService;
 
 /**
  * @author madhankumar
  *
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = RecruitmentApplication.class)
-@ActiveProfiles(profiles = {"dev"})
-public abstract class AbstractTest {
+@Component
+public class AuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
 
   @Autowired
-  protected TestRestTemplate template;
+  CustomerService customerService;
 
-  @Autowired
-  WebApplicationContext context;
+  @Override
+  protected void additionalAuthenticationChecks(UserDetails userDetails,
+    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken) throws AuthenticationException {
+    //
+  }
 
-  protected MockMvc mvc;
+  @Override
+  protected UserDetails retrieveUser(String userName,
+    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken) throws AuthenticationException {
 
-  protected static String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiQURNSU4iLCJwYXNzd29yZCI6IkFETUlOIiwicm9sZSI6IlJPTEVfQURNSU4ifQ.pwYxrnUJiaEoYfQqC4uKHa3LpZnHna20Ot92zzJEvKw";
-
+    Object token = usernamePasswordAuthenticationToken.getCredentials();
+    return Optional
+      .ofNullable(token)
+      .map(String::valueOf)
+      .flatMap(customerService::findByToken)
+      .orElseThrow(() -> new UsernameNotFoundException("Cannot find user with authentication token=" + token));
+  }
 }

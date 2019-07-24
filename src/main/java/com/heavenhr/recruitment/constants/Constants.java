@@ -53,4 +53,6 @@ public class Constants {
   public static final String ERR_DUPLICATE_RECORD = "1002";
 
   public static final String ERR_MANDATORY_FIELD = "1003";
+
+  public static final String AUTH_HEADER = "x-auth-token";
 }
