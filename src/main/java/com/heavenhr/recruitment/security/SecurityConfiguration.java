@@ -32,6 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package com.heavenhr.recruitment.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -64,6 +65,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
   AuthenticationProvider provider;
 
+  @Autowired
+  AuthenticationEntryPoint restAuthenticationEntryPoint;
+
   public SecurityConfiguration(final AuthenticationProvider authenticationProvider) {
     super();
     this.provider = authenticationProvider;
@@ -84,7 +88,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     http.sessionManagement()
       .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
       .and()
-      .exceptionHandling()
+      .exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint)
       .and()
       .authenticationProvider(provider)
       .addFilterBefore(authenticationFilter(), AnonymousAuthenticationFilter.class)
